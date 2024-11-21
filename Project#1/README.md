@@ -1,4 +1,4 @@
-# Project: 3120-Project-1
+#Project-1
 
 This project demonstrates how to collect, process, and visualize data from the web using Python. It integrates web scraping, data manipulation, and visual storytelling to extract meaningful insights from online content.
 
