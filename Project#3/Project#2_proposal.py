@@ -144,6 +144,9 @@ def combine_and_save():
     # Merge both datasets on the "Country" column
     combined_df = pd.merge(api_df, gdp_df, on="Country", how="inner")
     
+    # Remove commas from all numerical columns
+    combined_df = combined_df.applymap(lambda x: x.replace(",", "") if isinstance(x, str) and x.replace(",", "").isdigit() else x)
+    
     # Define the file path for saving the combined data
     desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
     file_path = os.path.join(desktop_path, 'Combined_Countries_Data.csv')
