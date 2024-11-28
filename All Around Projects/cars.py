@@ -130,7 +130,6 @@ def cars_api(manufacturer_list):
 
 
 def main():
-    # Scrape data from Wikipedia
     manufacturer_list, cars_df = web_scraping()
 
 
