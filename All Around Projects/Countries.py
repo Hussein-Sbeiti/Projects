@@ -269,14 +269,14 @@ def main():
     # Fetch data via API
     countries_data = countries_api(location_list)
     print("API data fetch completed. Filling missing values with column means...")
-    
-    # Round all numeric columns to 2 decimal places
-    countries_data_filled = countries_data_filled.round(2)
 
     # Fill missing values with column means
     countries_data_filled = fill_missing_with_mean(countries_data)
     print("Missing values filled. Saving the cleaned data...")
 
+    # Round all numeric columns to 2 decimal places
+    countries_data_filled = countries_data_filled.round(2)
+    
     desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
     file_path = os.path.join(desktop_path, 'countries_data_filled.csv')
     countries_data_filled.to_csv(file_path, index=False)
