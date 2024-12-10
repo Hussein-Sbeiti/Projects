@@ -371,6 +371,8 @@ def hw_3_pt3():
     finally:
         # Close the browser
         driver.quit()
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd  
