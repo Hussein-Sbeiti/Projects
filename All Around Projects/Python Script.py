@@ -551,3 +551,145 @@ def hw_2_pt3():
             print_date_3_ways(month, day, year) 
 
     main()
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd 
+
+def hw_1_pt1():   
+    #This function is where all the web scraping going to happen.
+    def backend(url):
+        #It makes a request to get the url and verify it
+        page = requests.get(url, verify=False)
+        soup = BeautifulSoup(page.content, 'html.parser')
+        
+        #Here we extract all the data for the heights and names of the players and its from the specifi tags and classes  
+        heights = soup.find_all('td', class_ = 'height')
+        names = soup.find_all('td', class_ = 'sidearm-table-player-name')
+
+        #We put the extracted heigh data into a list and convert them from strings to numbers with decimals(floats) 
+        height_list = []
+        for height in heights:
+            height_list.append(float(height['data-sort']))
+        
+        #The same is done here but we append it into strings and leave them that way     
+        name_list = []
+        for name in names:
+            name_list.append(name.get_text(strip=True))
+
+        #Then we return the data into a pandas dataframe(table) which is labeled respectively
+        return pd.DataFrame({
+            'Name': name_list,
+            'Height': height_list       
+        })
+
+    #This function calls the df variable from above and prints out the table. The sport variable is the name of the url (ex. Mens swimming)
+    def show_statitics(sport , df):
+        print ('**************************************************')
+        print(f'This is {sport} statistics')
+        print(df ,'\n','\n', df.describe())
+
+    #This function is for the user who is using it so it makes it easier for me and the person who is using this program to look at the data 
+    def Webpage():
+        
+        #Here we put into a list the name of the webiste and the url of the webiste so it can be called later
+        url_teams = {
+            1: ("Mens Swimming Team", 'https://athletics.baruch.cuny.edu/sports/mens-swimming-and-diving/roster?view=2'),
+            2: ("Mens Volleyball Team", 'https://athletics.baruch.cuny.edu/sports/mens-volleyball/roster?view=2'),
+            3: ("Womens Swimming Team", 'https://athletics.baruch.cuny.edu/sports/womens-swimming-and-diving/roster?view=2'),
+            4: ("Womens Volleyball Team", 'https://athletics.baruch.cuny.edu/sports/womens-volleyball/roster?view=2')
+        }
+        
+        #This is a loop where as long as the user want to view all the data that is being scrapped they can 
+        while True:
+            #The user enters a number and it countines the loop till the user ends it by entering 5  
+            print ('**************************************************')
+            print('Enter a number between 1-4 to see the statistics. Enter 5 to exit.')
+            choice = (int(input('Enter a number: ')))
+            #There is a if statment where if the choice is equal to either numbers 1-4 from the list above 
+            if choice in url_teams:
+                #It will take the variables sport and url and depending on the choice will scrape the web with the backend function
+                sport, url = url_teams[choice] 
+                df = backend(url)
+                #Then it will print the results out below with the name of the the website
+                show_statitics(sport,df)
+            elif choice == 5:
+                print('Goodbye!')
+                break
+            else:
+                print('Invalid choice, please try again.')            
+
+    Webpage()
+    
+def hw_1_pt2():
+    #In this function we will introduce to the user my name and what the rest of the program will do.
+    def introduction():
+        print("***********************************************************************************")
+        print("Hello! My name is Hussein Sbeiti")
+        print("This program will ask you for 3 numbers")
+        print("It will give you the average of the 3 numbers and compare them to the average")
+        print("There is a 3 number special combination. Can you guess it?")
+        print("Good Luck!")
+        print("***********************************************************************************")
+
+    #This function takes the paramaters from the main function of the number input. Then they will compute the average of the three numbers to the 3rd decimal.
+    def find_average(num_1, num_2, num_3):
+        average = (((num_1 + num_2 + num_3) / 3 ))
+        print (f'The average is {average:.3f}')
+        return average
+    
+    #We are comparing the average to all the input the user puts     
+    def compare_to_average(num_1, num_2, num_3,average):
+        #we have a variable that takes whatever is equal to the average gains one to the variable
+        equal_to_average = 0 
+        #if the inputs is equal to the average add towards the counter
+        for total in (num_1, num_2, num_3):
+            if total == average:
+                print(f'Number {total} is equal to the average')
+                equal_to_average += 1
+            elif total < average:
+                print(f'Number {total} is below then the average')
+            else:
+                print(f'Number {total} is above then the average')
+
+        print(f'{equal_to_average} value(s) is equal to the average')
+
+    #This is a funtion that asks the user for input of numbers and takes the funtions of other
+    def main():
+        #first the introduction is shown
+        introduction()
+        #there is a special combination which is 1,2,3 that the user has to guess to break the loop
+        special_combination = {1,2,3}
+        count_to_sets = 0 
+        #While the loop is true the user is asked for a loop till the user guesses the special combination
+        while True:
+            num_1 = (int(input("Enter a number: ")))
+            num_2 = (int(input("Enter a number: ")))
+            num_3 = (int(input("Enter a number: ")))
+            num_input = {num_1,num_2,num_3}
+            #once the user guesses the special combination then a message is played 
+            if num_input == special_combination:
+                count_to_sets += 1
+                print("***********************************************************************************")
+                print("Congradulations! You got the special combination!")
+                print(f'The amount of times it took you to guess is {count_to_sets}')
+                print(f'The Entered three numbers are: {num_1} , {num_2} , {num_3}')
+                average = find_average(num_1, num_2, num_3)
+                compare_to_average(num_1, num_2, num_3, average)
+                print("***********************************************************************************")
+                break
+            #if the user gets to 10 the program stops and a message is played 
+            else:
+                count_to_sets += 1
+                #This prints out a message of the average and the numbers being compared to the average and the anmount of times the sets have printed
+                print("***********************************************************************************")
+                print(f'The original three numbers are: {num_1} , {num_2} , {num_3}')
+                average = find_average(num_1, num_2, num_3)
+                compare_to_average(num_1, num_2, num_3, average)
+                print("***********************************************************************************")
+        
+        
+    main()
+
