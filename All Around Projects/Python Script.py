@@ -371,3 +371,181 @@ def hw_3_pt3():
     finally:
         # Close the browser
         driver.quit()
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd  
+import json
+
+def hw_2_pt1():
+    
+    # URL of the NFL team stats webpage
+    url = 'https://www.nfl.com/stats/team-stats/'
+
+    page = requests.get(url, verify=False)
+    soup = BeautifulSoup(page.content, 'html.parser')
+
+    # Initialize lists to store extracted data
+    all_names = []
+    yards_pass = []
+    touchdowns = []
+    ints = []
+
+    # Find all table rows in the HTML content
+    rows = soup.find_all('tr')
+
+    # Iterate over each row to extract data
+    for row in rows:
+        cols = row.find_all('td')  # Find all table data (columns) in the row
+        if cols:  # Skip rows without columns
+            team_name = cols[0].get_text(strip=True).split(' ')[0]  
+            pass_yards = cols[5].get_text(strip=True)  
+            touchdown = cols[6].get_text(strip=True) 
+            interception = cols[7].get_text(strip=True) 
+
+            # Append data to respective lists
+            all_names.append(team_name)
+            yards_pass.append(float(pass_yards)) 
+            touchdowns.append(int(touchdown)) 
+            ints.append(int(interception))  
+
+    # Create a DataFrame using the extracted data
+    data_df = pd.DataFrame({
+        'Team' : all_names,
+        'Pass Yds' : yards_pass,
+        'TD' : touchdowns,
+        'INT' : ints
+    })
+
+    print(data_df) 
+    print(data_df.describe())  
+
+    # Save the DataFrame to a CSV file
+    data_df.to_csv("/Users/husseinsbeiti/Desktop/Football League Statistics.csv")
+
+def hw_2_pt2():
+        
+    # API endpoint and parameters
+    url = "https://calendarific.com/api/v2/holidays"
+    parameter = {
+        "api_key": "EEMuLa8bTU3w9kksjPXjtB6WsafBR8hW",  
+        "country": "US",  # Country code for holidays
+        "year": "2024"  # Year for which holidays are fetched
+    }
+
+    # Make GET request to the API
+    res = requests.get(url, params=parameter)
+
+    # Check if the response status is OK (200)
+    if res.status_code == 200:
+        data = res.json()  # Parse the response JSON
+        formatted_data = json.dumps(data, indent=1, sort_keys=True)  # Format JSON for readability (optional)
+
+        # Initialize lists to store holiday details
+        name_all = []
+        id_all = []
+        locations_all = []
+        primary_type_all = []
+        day_all = []
+        month_all = []
+        year_all = []
+
+        # Extract relevant fields from the API response
+        for results in data['response']['holidays']:
+            name_all.append(results['name'])  # Holiday name
+            id_all.append(results['country']['id'])  # Country ID
+            locations_all.append(results['locations'])  # Locations associated with the holiday
+            primary_type_all.append(results['primary_type'])  # Primary type of holiday
+            month_all.append(results['date']['datetime']['month'])  # Month of the holiday
+            year_all.append(results['date']['datetime']['year'])  # Year of the holiday
+            day_all.append(results['date']['datetime']['day'])  # Day of the holiday
+
+        # Create a dictionary for storing extracted holiday data
+        holidays = {
+            'Name' : name_all,
+            'Country ID' : id_all,
+            'Locations' : locations_all,
+            'Primary Type' : primary_type_all,
+            'Month' : month_all,
+            'Year' : year_all,
+            'Day' : day_all,
+        }
+
+        # Convert the dictionary to a DataFrame
+        holidays_df = pd.DataFrame(holidays)
+        print(holidays_df)  # Print the DataFrame
+        print(holidays_df.describe())  # Print a summary of numerical columns in the DataFrame
+
+        # Save the DataFrame to a CSV file
+        holidays_df.to_csv('/Users/husseinsbeiti/Desktop/holiday.csv', index=True)
+
+def hw_2_pt3():
+    def read_original_date():
+        # Prompt user for a date
+        print("************************************************************")
+        date = input("Enter a date in the form of MM/DD/YY or MM/DD/YYYY: ")
+        print("************************************************************")
+        return date
+
+    def break_original_date(date):
+        # Split the date into parts and validate format
+        try:
+            date_result = date.split("/")
+            # Check if input has exactly 3 parts
+            if len(date_result) != 3:  
+                # Raise error for invalid format
+                raise ValueError  
+            month, day, year = date_result
+        except ValueError:
+            # Print error message for invalid input
+            print("Invalid date format. Please enter in MM/DD/YY or MM/DD/YYYY format.")
+            return None, None, None  
+        
+        # Print the date components
+        print(f"{date} is the original date")
+        print(f"{month} is the month")
+        print(f"{day} is the day")
+        print(f"{year} is the year")
+        return month, day, year
+
+    def print_date_3_ways(month, day, year):
+        
+        # Convert two-digit year to four-digit
+        if len(year) == 2:
+            year_full = f"20{year}"
+        else:
+            year_full = year
+        
+        # List of month names
+        months = ["January" , "February" , "March" , "April" , "May" , "June" , "July" , "August" , "September" , "October" , "November" , "December"]
+        
+        # Get month name
+        month_name = months[int(month) - 1]
+        
+        # Print in European format
+        european_date = f"{day}-{month}-{year}"
+        print(f"European way of printing: {european_date}")
+        
+        # Print in American format
+        american_date = f"{month_name} {int(day)}, {year_full}"
+        print(f"American way of printing: {american_date}")
+        
+        # Print in full format
+        full_date = f"{month.zfill(2)}-{day.zfill(2)}-{year_full}"
+        print(f"Full way of printing: {full_date}")
+
+    def main():
+        # Main loop to process multiple dates
+        while True:
+            original_date = read_original_date()  
+            if original_date.lower() == "quit": 
+                print("Exiting program.")
+                break
+            # Split date
+            month, day, year = break_original_date(original_date) 
+            # Skip invalid dates
+            if month is None: 
+                continue
+            # Print date in 3 formats
+            print_date_3_ways(month, day, year) 
+
+    main()
