@@ -1,7 +1,7 @@
 #In this function we will introduce to the user my name and what the rest of the program will do.
 def introduction():
     print("***********************************************************************************")
-    print("Hello! My name is Hussein Sbeiti")
+    print("Hello! My name is []")
     print("This program will ask you for 3 numbers")
     print("It will give you the average of the 3 numbers and compare them to the average")
     print("There is a 3 number special combination. Can you guess it?")
